@@ -2,7 +2,15 @@ import User from '../models/user.model.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
-// SIGNUP FUNCTION
+const cookieOptions = {
+    httpOnly: true,
+    secure: false,       // false because you're using localhost http
+    sameSite: "lax",     // strict blocks Postman, lax works everywhere
+    path: "/",           // required for reading cookie on all routes
+    maxAge: 15 * 24 * 60 * 60 * 1000 // 15 days
+};
+
+// SIGNUP
 export const signup = async (req, res) => {
     try {
         const { fullName, username, password, confirmPassword, gender } = req.body;
@@ -10,38 +18,34 @@ export const signup = async (req, res) => {
         if (password !== confirmPassword) {
             return res.status(400).json({ error: "Passwords don't match" });
         }
-        const user = await User.findOne({ username });
-        if (user) {
+
+        const userExists = await User.findOne({ username });
+        if (userExists) {
             return res.status(400).json({ error: "Username already exists" });
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const boyProfilePic = `https://avatar.iran.liara.run/public/boy?username=${username}`;
-        const girlProfilePic = `https://avatar.iran.liara.run/public/girl?username=${username}`;
+        const boyPic = `https://avatar.iran.liara.run/public/boy?username=${username}`;
+        const girlPic = `https://avatar.iran.liara.run/public/girl?username=${username}`;
 
         const newUser = new User({
             fullName,
             username,
             password: hashedPassword,
             gender,
-            profilePic: gender === "male" ? boyProfilePic : girlProfilePic
+            profilePic: gender === "male" ? boyPic : girlPic
         });
 
         await newUser.save();
 
-        // Generate and set JWT on signup (optional, but often done)
         const token = jwt.sign(
             { userId: newUser._id },
             process.env.JWT_SECRET,
             { expiresIn: "15d" }
         );
-        res.cookie("jwt", token, {
-            httpOnly: true,
-            sameSite: "strict",
-            secure: false, // true in production with HTTPS
-            maxAge: 15 * 24 * 60 * 60 * 1000 // 15 days
-        });
+
+        res.cookie("jwt", token, cookieOptions);
 
         res.status(201).json({
             _id: newUser._id,
@@ -51,41 +55,34 @@ export const signup = async (req, res) => {
         });
 
     } catch (error) {
-        console.log("Error in signup controller", error.message);
+        console.error("Signup error:", error.message);
         res.status(500).json({ error: "Internal server error" });
     }
 };
 
-// LOGIN FUNCTION
+
+// LOGIN
 export const login = async (req, res) => {
     try {
         const { username, password } = req.body;
-        const user = await User.findOne({ username });
 
+        const user = await User.findOne({ username });
         if (!user) {
             return res.status(400).json({ error: "Invalid username or password" });
         }
 
-        const isPasswordCorrect = await bcrypt.compare(password, user.password);
-
-        if (!isPasswordCorrect) {
+        const isCorrect = await bcrypt.compare(password, user.password);
+        if (!isCorrect) {
             return res.status(400).json({ error: "Invalid username or password" });
         }
 
-        // Generate a JWT token
         const token = jwt.sign(
             { userId: user._id },
             process.env.JWT_SECRET,
             { expiresIn: "15d" }
         );
 
-        // Set JWT cookie
-        res.cookie("jwt", token, {
-            httpOnly: true,
-            sameSite: "strict",
-            secure: false, // true in production with HTTPS
-            maxAge: 15 * 24 * 60 * 60 * 1000 // 15 days
-        });
+        res.cookie("jwt", token, cookieOptions);
 
         res.status(200).json({
             _id: user._id,
@@ -95,18 +92,19 @@ export const login = async (req, res) => {
         });
 
     } catch (error) {
-        console.log("Error in login controller: ", error.message);
+        console.error("Login error:", error.message);
         res.status(500).json({ error: "Internal server error" });
     }
 };
 
-// LOGOUT FUNCTION
+
+// LOGOUT
 export const logout = (req, res) => {
     try {
-        res.cookie("jwt", "", { maxAge: 0, httpOnly: true, sameSite: "strict" });
+        res.cookie("jwt", "", { maxAge: 0, httpOnly: true, path: "/" });
         res.status(200).json({ message: "Logged out successfully" });
     } catch (error) {
-        console.log("Error in logout controller: ", error.message);
+        console.error("Logout error:", error.message);
         res.status(500).json({ error: "Internal server error" });
     }
 };

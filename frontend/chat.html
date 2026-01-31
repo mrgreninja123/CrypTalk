@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CrypTalk - Chat</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body class="chat-page">
+    <div class="chat-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <!-- Header -->
+            <div class="sidebar-header">
+                <div class="sidebar-header-left">
+                    <h1>CrypTalk</h1>
+                </div>
+                <div class="sidebar-header-right">
+                    <button id="logoutBtn" class="icon-btn" title="Logout">
+                        🚪
+                    </button>
+                </div>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="search-container">
+                <input 
+                    type="text" 
+                    id="searchInput" 
+                    class="search-input" 
+                    placeholder="🔍 Search username..."
+                    autocomplete="off"
+                >
+                <div id="searchResults" class="search-results" style="display: none;"></div>
+            </div>
+
+            <!-- Contacts List -->
+            <div id="contactsList" class="contacts-list">
+                <!-- Contacts will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Chat Area -->
+        <div class="chat-area">
+            <!-- Chat Header -->
+            <div class="chat-header">
+                <div class="chat-header-left">
+                    <div id="selectedUserAvatar" class="user-avatar">
+                        👤
+                    </div>
+                    <div>
+                        <h2 id="selectedUserName">Select a contact</h2>
+                        <p id="selectedUserUsername" class="username">@username</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Messages Container -->
+            <div id="messagesContainer" class="messages-container">
+                <!-- Messages will be loaded here -->
+            </div>
+
+            <!-- Message Input -->
+            <div class="message-input-area">
+                <form id="messageForm" class="message-form">
+                    <input 
+                        type="text" 
+                        id="messageInput" 
+                        class="message-input" 
+                        placeholder="Type a message..."
+                        disabled
+                    >
+                    <button type="submit" class="send-btn" disabled>
+                        ➤
+                    </button>
+                </form>
+            </div>
+
+            <!-- Empty State -->
+            <div id="emptyState" class="empty-state">
+                <div class="empty-state-content">
+                    <h3>👋 Welcome to CrypTalk</h3>
+                    <p>Select a contact to start messaging</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="assets/js/script.js"></script>
+</body>
+</html>
