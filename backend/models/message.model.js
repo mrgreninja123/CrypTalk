@@ -14,11 +14,13 @@ const messageSchema = new mongoose.Schema(
         },
         message: {
             type: String,
-            required: true
+            required: true,
+            trim: true
         }
-        // createdAt, updatedAt
     },
-    { timestamps: true }
+    { 
+        timestamps: true 
+    }
 );
 
 const Message = mongoose.model("Message", messageSchema);

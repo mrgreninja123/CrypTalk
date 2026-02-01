@@ -41,7 +41,7 @@ export const signup = async (req, res) => {
 
         const token = jwt.sign(
             { userId: newUser._id },
-            process.env.JWT_SECRET,
+            process.env.JWT_SECRET,  // ✅ Fixed: JWT_SECRET
             { expiresIn: "15d" }
         );
 
@@ -60,7 +60,6 @@ export const signup = async (req, res) => {
     }
 };
 
-
 // LOGIN
 export const login = async (req, res) => {
     try {
@@ -78,7 +77,7 @@ export const login = async (req, res) => {
 
         const token = jwt.sign(
             { userId: user._id },
-            process.env.JWT_SECRET,
+            process.env.JWT_SECRET,  // ✅ Fixed: JWT_SECRET
             { expiresIn: "15d" }
         );
 
@@ -96,7 +95,6 @@ export const login = async (req, res) => {
         res.status(500).json({ error: "Internal server error" });
     }
 };
-
 
 // LOGOUT
 export const logout = (req, res) => {

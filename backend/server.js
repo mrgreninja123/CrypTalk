@@ -19,13 +19,15 @@ const PORT = process.env.PORT || 5000;
 
 // Database connection
 let dbConnected = false;
-connectToMongoDB().then(() => {
-    dbConnected = true;
-    console.log("✓ MongoDB connected");
-}).catch((err) => {
-    console.error("✗ MongoDB connection failed:", err.message);
-    dbConnected = false;
-});
+connectToMongoDB()
+    .then(() => {
+        dbConnected = true;
+        console.log("✅ MongoDB connected");
+    })
+    .catch((err) => {
+        console.error("❌ MongoDB connection failed:", err.message);
+        dbConnected = false;
+    });
 
 /*
     CORS SETTINGS - Development allows all origins
@@ -76,9 +78,9 @@ app.use((err, req, res, next) => {
 
 // Start server
 const server = app.listen(PORT, () => {
-    console.log(`✓ Server running on port ${PORT}`);
-    console.log(`✓ API Base: http://localhost:${PORT}/api`);
-    console.log(`✓ Health Check: http://localhost:${PORT}/health`);
+    console.log(`✅ Server running on port ${PORT}`);
+    console.log(`🌐 API Base: http://localhost:${PORT}/api`);
+    console.log(`🔍 Health Check: http://localhost:${PORT}/health`);
 });
 
 // Graceful shutdown
